@@ -30,13 +30,13 @@
             <MudDivider DividerType="DividerType.Middle" Light="true" Class="mt-10" />
             <BSRow MarginTopAndBottom="Margins.ExtraLarge" Align="BlazorStrap.Align.Center">
                 <div>
-                    <MudLink Href="/reset-password" @onclick="OnReset">Forgot password?</MudLink>
+                    <MudLink Href="reset-password" @onclick="OnReset">Forgot password?</MudLink>
                 </div>
             </BSRow>
             <BSRow Align="BlazorStrap.Align.Center">
                 <div>
                     <span>Don't have a User ID?</span>
-                    <MudLink Href="/create-account" @onclick="OnReset">Create account</MudLink>
+                    <MudLink Href="create-account" @onclick="OnReset">Create account</MudLink>
                 </div>
             </BSRow>
         </BSContainer>
@@ -82,7 +82,7 @@
                 {
                     await userState.SetLogin(true, Model.UserName);
                     await SetLoader.InvokeAsync(false);
-                    NavigationManager.NavigateTo("/dashboard");
+                    NavigationManager.NavigateTo("dashboard");
                 }
                 else
                 {

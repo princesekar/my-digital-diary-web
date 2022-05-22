@@ -77,12 +77,12 @@
 
     public void OnHomeClick()
     {
-        NavigationManager.NavigateTo("/dashboard");
+        NavigationManager.NavigateTo("dashboard");
     }
 
     public void OnThemeNav()
     {
-        NavigationManager.NavigateTo("/themes");
+        NavigationManager.NavigateTo("themes");
     }
 
     public EventCallback<bool> SetLoader => EventCallback.Factory.Create<bool>(this, SetLoaderState);
