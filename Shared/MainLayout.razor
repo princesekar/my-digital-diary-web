@@ -62,17 +62,17 @@
     protected override void OnParametersSet()
     {
         string routePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        List<string> skipPages = new List<string>() { string.Empty, "reset-password", "create-account" };
+        List<string> skipPages = new List<string>() { string.Empty, "reset-password", "create-account", "sign-in" };
         @if (!userState.IsUserLoggedIn && !skipPages.Contains(routePath))
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("sign-in");
         }
     }
     public async Task OnLogOut()
     {
         isJsInit = false;
         await userState.SetLogin(false, null);
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("sign-in");
     }
 
     public void OnHomeClick()
