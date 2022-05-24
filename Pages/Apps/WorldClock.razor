@@ -1,6 +1,71 @@
 ﻿@page "/world-clock"
-<h3>WorldClock</h3>
+@using System.Timers
+
+<AppLayout ClassName="world-clock" Heading="World Clock">
+    <BSRow>
+        <BSCol>
+            <div class="d-flex align-items-center justify-content-center">
+                <MudAutocomplete T="string" Label="TimeZone" @bind-Value="PrimaryId" SearchFunc="@Search1" Margin="@Margin.Dense"
+                                 Variant="@Variant.Outlined" Immediate="true" />
+                <Clock @bind-TimeZone="PrimaryId"></Clock>
+            </div>
+        </BSCol>
+        <BSCol>
+            <div class="d-flex align-items-center justify-content-center">
+                <MudAutocomplete T="string" Label="TimeZone" @bind-Value="SecondaryId" SearchFunc="@Search1" Margin="@Margin.Dense"
+                                 Variant="@Variant.Outlined" Immediate="true" />
+                <Clock @bind-TimeZone="SecondaryId"></Clock>
+            </div>
+        </BSCol>
+    </BSRow>
+</AppLayout>
 
 @code {
+    private List<string> timeZones { get; set; } = new List<string>();
 
-}
+    private string primaryId;
+    public string PrimaryId
+    {
+        get { return primaryId; }
+        set
+        {
+            if (value != null && value != primaryId)
+            {
+                primaryId = value;
+            }
+        }
+    }
+
+    private string secondaryId;
+    public string SecondaryId
+    {
+        get { return secondaryId; }
+        set
+        {
+            if (value != null && value != secondaryId)
+            {
+                secondaryId = value;
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        PrimaryId = TimeZoneInfo.Local.Id;
+        SecondaryId = "America/New_York";
+        foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
+        {
+            timeZones.Add(timeZone.Id);
+        }
+        timeZones.Sort();
+    }
+
+    private async Task<IEnumerable<string>> Search1(string value)
+    {
+        await Task.CompletedTask;
+        if (string.IsNullOrEmpty(value))
+            return timeZones;
+        return timeZones.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    }

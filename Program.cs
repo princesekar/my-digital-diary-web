@@ -7,6 +7,7 @@ using MudBlazor.Services;
 using Recurop;
 using BlazorStrap;
 using MudBlazor;
+using Syncfusion.Blazor;
 using BlazorPro.BlazorSize;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -21,6 +22,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddRecurop();
 builder.Services.AddBlazorStrap();
+builder.Services.AddSyncfusionBlazor();
 builder.Services.AddMediaQueryService();
 builder.Services.AddScoped<UserState>();
 
