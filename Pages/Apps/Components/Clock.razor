@@ -3,27 +3,27 @@
 @implements IDisposable;
 @inject UserState userState;
 
-<SfCircularGauge @ref="ClockRef" Background="transparent">
+<SfCircularGauge @ref="ClockRef" Background="@(isNight ? MudBlazor.Colors.Shades.Black : MudBlazor.Colors.Shades.White)">
     <CircularGaugeAxes>
         <CircularGaugeAxis Radius="90%" StartAngle="0" EndAngle="0" Minimum="0" Maximum="12">
             <CircularGaugeAxisLabelStyle HiddenLabel="HiddenLabel.First" Offset="10">
-                <CircularGaugeAxisLabelFont FontFamily="inherit" />
+                <CircularGaugeAxisLabelFont FontFamily="inherit" Color="@(isNight ? MudBlazor.Colors.Shades.White : MudBlazor.Colors.Shades.Black)" />
             </CircularGaugeAxisLabelStyle>
             <CircularGaugeAxisLineStyle Width="2" />
             <CircularGaugeAxisMajorTicks Height="15" Interval="1" Width="2" Offset="5" />
             <CircularGaugeAxisMinorTicks Height="10" Width="1" Interval="0.2" Offset="5" />
             <CircularGaugePointers>
-                <CircularGaugePointer Value="@HoursPointer" Radius="60%" PointerWidth="5">
+                <CircularGaugePointer Value="@HoursPointer" Radius="50%" PointerWidth="5">
                     <CircularGaugePointerAnimation Enable="false" />
                     <CircularGaugeCap Radius="5" Color="white">
-                        <CircularGaugeCapBorder Width="1" Color="#00A8B5" />
+                        <CircularGaugeCapBorder Width="1" Color="@(isNight ? MudBlazor.Colors.Shades.White : MudBlazor.Colors.Shades.Black)" />
                     </CircularGaugeCap>
                     <CircularGaugeNeedleTail Length="0%" />
                 </CircularGaugePointer>
-                <CircularGaugePointer Value="@MinutesPointer" Radius="70%" PointerWidth="3">
+                <CircularGaugePointer Value="@MinutesPointer" Radius="80%" PointerWidth="3">
                     <CircularGaugePointerAnimation Enable="false" />
                     <CircularGaugeCap Radius="5" Color="white">
-                        <CircularGaugeCapBorder Width="1" Color="#00A8B5" />
+                        <CircularGaugeCapBorder Width="1" Color="@(isNight ? MudBlazor.Colors.Shades.White : MudBlazor.Colors.Shades.Black)" />
                     </CircularGaugeCap>
                     <CircularGaugeNeedleTail Length="0%" />
                 </CircularGaugePointer>
@@ -41,6 +41,7 @@
 
 @code {
     private Timer timer;
+    private bool isNight;
     private TimeSpan TimeNow;
     public SfCircularGauge? ClockRef;
     public double SecondsPointer = 0.2;
@@ -53,33 +54,57 @@
     [Parameter]
     public EventCallback<string> TimeZoneChanged { get; set; }
 
+    [Parameter]
+    public bool IsPrimaryClock { get; set; }
+
+    [CascadingParameter]
+    public WorldClock Parent { get; set; }
+
     protected override void OnParametersSet()
     {
         if (timer != null)
         {
             timer.Dispose();
             timer = null;
+            timer = new Timer(1000);
+            timer.Elapsed += this.NeedlePointerUpdate;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            SetClockProperties();
         }
-        timer = new Timer(1000);
-        timer.Elapsed += this.NeedlePointerUpdate;
-        timer.AutoReset = true;
-        timer.Enabled = true;
-        SetClockProperties();
     }
 
-    private void SetClockProperties()
+    private void RefreshWorldClock(bool isNight)
+    {
+        if (IsPrimaryClock)
+        {
+            Parent.PrimaryClockRefresh(isNight);
+        }
+        else
+        {
+
+            Parent.SecondaryClockRefresh(isNight);
+        }
+    }
+
+    private void SetClockProperties(bool changeClockProperties = true)
     {
         TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
         DateTime utcTime = DateTime.Now.ToUniversalTime();
         DateTime dateTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZone);
-        HoursPointer = dateTime.Hour % 12;
-        MinutesPointer = dateTime.Minute / 5;
-        SecondsPointer = dateTime.Second / 10;
+        isNight = dateTime.Hour >= 18 || dateTime.Hour <= 6;
+        RefreshWorldClock(isNight);
+
+        if (changeClockProperties)
+        {
+            HoursPointer = dateTime.Hour % 12;
+            MinutesPointer = dateTime.Minute / 5;
+            SecondsPointer = dateTime.Second / 10;
+        }
     }
 
     private void NeedlePointerUpdate(Object source, ElapsedEventArgs e)
     {
-        //SetClockProperties();
         if (SecondsPointer > 11.8)
         {
             SecondsPointer = 0;
@@ -89,6 +114,7 @@
             {
                 MinutesPointer = 0;
                 minsPointerIndex = 0;
+                SetClockProperties(false);
             }
             SetHoursPointer();
             ClockRef.SetPointerValueAsync(0, minsPointerIndex, MinutesPointer);
@@ -114,7 +140,19 @@
                 ClockRef.SetPointerValueAsync(0, 1, HoursPointer);
             }
         }
+    }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            timer = new Timer(2000);
+            timer.Elapsed += this.NeedlePointerUpdate;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            SetClockProperties();
+            StateHasChanged();
+        }
     }
 
     public void Dispose()
