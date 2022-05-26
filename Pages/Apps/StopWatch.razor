@@ -102,6 +102,7 @@
         blinkOperation.Operation = BlinkTimer;
         blinkOperation.StatusChanged += BlinkerOperationStatusChanged;
         lapsData = new List<LapsTable>();
+        userState.OnChange += StateHasChanged;
     }
 
     public class LapsTable
@@ -181,5 +182,6 @@
         lapsData = null;
         Recurop.CancelRecurring(timerOperation);
         Recurop.CancelRecurring(blinkOperation);
+        userState.OnChange -= StateHasChanged;
     }
 }

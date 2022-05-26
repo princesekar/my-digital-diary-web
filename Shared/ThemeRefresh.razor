@@ -1,0 +1,15 @@
+﻿@implements IDisposable
+@inject UserState userState;
+
+@code {
+    protected override void OnInitialized()
+    {
+        userState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        userState.OnChange -= StateHasChanged;
+    }
+
+}

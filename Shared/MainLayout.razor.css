@@ -1,4 +1,4 @@
-html, body {
+xhtml, body {
     margin: 0;
     height: 100%;
 }
@@ -22,9 +22,11 @@ header {
     align-items: center;
     flex-direction: row;
 }
+
 .home-icon {
     cursor: pointer;
 }
+
 .avatar-wrapper {
     margin-left: auto;
 }
@@ -52,6 +54,7 @@ h1 {
     header {
         height: 3.75rem;
     }
+
     h1 {
         font-size: 1.5rem;
     }

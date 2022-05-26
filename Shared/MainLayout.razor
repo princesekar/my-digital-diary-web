@@ -1,46 +1,51 @@
-﻿@inherits LayoutComponentBase
+﻿@implements IDisposable
+@inherits LayoutComponentBase
 @inject IJSRuntime JS;
 @inject UserState userState;
+@inject IDialogService DialogService;
 @inject NavigationManager NavigationManager;
 
-<MudThemeProvider />
-<MediaQueryList>
-    <MediaQuery Media="@BlazorPro.BlazorSize.Breakpoints.MediumDown" @bind-Matches="IsMediumDown" />
-    <div class="page">
-        <BSContainer Container="Container.Default">
-            <header>
-                @if (userState.IsUserLoggedIn)
-                {
-                    <div class="home-icon" @onclick="OnHomeClick">
-                        <MudIcon Icon="@Icons.Material.Filled.Home" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />
-                    </div>
-                }
-                <h1 class="m-0">My Digital Diary!</h1>
-                @if (userState.IsUserLoggedIn)
-                {
-                    <div class="avatar-wrapper">
-                        <MudMenu Icon="@Icons.Material.Filled.Settings" AnchorOrigin="Origin.BottomLeft" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) TransformOrigin="Origin.BottomCenter">
-                            <MudMenuItem OnClick="OnThemeNav" OnTouch="OnThemeNav">
-                                <MudIcon Icon="@Icons.Filled.ColorLens" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />  Themes
-                            </MudMenuItem>
-                            <MudMenuItem OnClick="OnLogOut" OnTouch="OnLogOut">
-                                <MudIcon Icon="@Icons.Filled.Logout" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />  Logout
-                            </MudMenuItem>
-                        </MudMenu>
-                    </div>
-                }
-            </header>
-            <main>
-                <CascadingValue Value=SetLoader>
+
+<CascadingValue Value=SetLoader>
+    <MudThemeProvider />
+    <MudDialogProvider />
+    <MediaQueryList>
+        <MediaQuery Media="@BlazorPro.BlazorSize.Breakpoints.MediumDown" @bind-Matches="IsMediumDown" />
+        <div class="page">
+            <BSContainer Container="Container.Default">
+                <header>
+                    @if (userState.IsUserLoggedIn)
+                    {
+                        <div class="home-icon" @onclick="OnHomeClick">
+                            <MudIcon Icon="@Icons.Material.Filled.Home" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />
+                        </div>
+                    }
+                    <h1 class="m-0">My Digital Diary!</h1>
+                    @if (userState.IsUserLoggedIn)
+                    {
+                        <div class="avatar-wrapper">
+                            <MudMenu Icon="@Icons.Material.Filled.Settings" AnchorOrigin="Origin.BottomLeft" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) TransformOrigin="Origin.BottomCenter">
+                                <MudMenuItem OnClick="OnThemeNav" OnTouch="OnThemeNav">
+                                    <MudIcon Icon="@Icons.Filled.ColorLens" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />  Themes
+                                </MudMenuItem>
+                                <MudMenuItem OnClick="OnLogOut" OnTouch="OnLogOut">
+                                    <MudIcon Icon="@Icons.Filled.Logout" Size=@(IsMediumDown ? MudBlazor.Size.Medium : MudBlazor.Size.Large ) Style="@($"color:{userState.Theme};")" />  Logout
+                                </MudMenuItem>
+                            </MudMenu>
+                        </div>
+                    }
+                </header>
+                <main>
                     @Body
-                </CascadingValue>
-            </main>
-        </BSContainer>
-        <MudOverlay @bind-Visible="showLoader" LightBackground="true" Absolute="true">
-            <MudProgressCircular Style="@($"color:{userState.Theme};")" Size="MudBlazor.Size.Medium" Indeterminate="true" />
-        </MudOverlay>
-    </div>
-</MediaQueryList>
+                </main>
+            </BSContainer>
+            <MudOverlay @bind-Visible="showLoader" LightBackground="true" Absolute="true">
+                <MudProgressCircular Style="@($"color:{userState.Theme};")" Size="MudBlazor.Size.Medium" Indeterminate="true" />
+            </MudOverlay>
+        </div>
+    </MediaQueryList>
+</CascadingValue>
+
 
 <style>
     header {
@@ -82,8 +87,9 @@
 
     public void OnThemeNav()
     {
-        NavigationManager.NavigateTo("themes");
+        DialogService.Show<Themes>("Themes", new DialogOptions { CloseButton = true });
     }
+
 
     public EventCallback<bool> SetLoader => EventCallback.Factory.Create<bool>(this, SetLoaderState);
 
@@ -91,6 +97,7 @@
     {
         showLoader = isLoaderVisible;
     }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -105,4 +112,15 @@
             await module.InvokeAsync<string>("preventPopupPropagation");
         }
     }
+
+    protected override void OnInitialized()
+    {
+        userState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        userState.OnChange -= StateHasChanged;
+    }
+
 }
