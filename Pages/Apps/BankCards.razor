@@ -16,7 +16,7 @@
         foreach (CardDetails card in cards)
         {
             <BankCard CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
-              HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" @onclick="() => OnUpdateClick(card)"></BankCard>
+              HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" OnClick="() => OnUpdateClick(card)"></BankCard>
         }
         <div class="position-fixed fixed-bottom add-card">
             <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"

@@ -21,21 +21,21 @@
     {
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
-        [JsonPropertyName("userName")]
+        [JsonPropertyName("user_name")]
         public string UserName { get; set; }
-        [JsonPropertyName("bankName")]
+        [JsonPropertyName("bank_name")]
         [Required(ErrorMessage = "Bank name is required.")]
         public string BankName { get; set; }
-        [JsonPropertyName("cardNumber")]
+        [JsonPropertyName("card_number")]
         [Required(ErrorMessage = "Card number is required.")]
         public string CardNumber { get; set; }
-        [JsonPropertyName("expiryMonth")]
+        [JsonPropertyName("expiry_month")]
         [Required(ErrorMessage = "Expiry month is required.")]
         public string ExpiryMonth { get; set; }
-        [JsonPropertyName("expiryYear")]
+        [JsonPropertyName("expiry_year")]
         [Required(ErrorMessage = "Expiry year is required.")]
         public string ExpiryYear { get; set; }
-        [JsonPropertyName("cardHolderName")]
+        [JsonPropertyName("card_holder_name")]
         [Required(ErrorMessage = "Card holder name is required.")]
         public string CardHolderName { get; set; }
         [JsonPropertyName("cvv")]

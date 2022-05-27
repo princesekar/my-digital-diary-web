@@ -1,5 +1,5 @@
 ﻿<BSCol ColumnLarge="6" ColumnMedium="12" Column="12">
-    <MudPaper Class="d-flex flex-column bank-card" Elevation="3">
+    <MudPaper Class="d-flex flex-column bank-card" Elevation="3" @onclick="OnClick">
         <BSRow MarginBottom="@(IsSmallDevice ? Margins.Small : Margins.Large)">
             <BSCol>
                 <MudText Typo="Typo.h6" Class="bank-name">@BankName</MudText>
@@ -48,6 +48,9 @@
 
     private string cardNumber;
     private string expiryDate;
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick {get;set;}
 
     [Parameter]
     public string BankName { get; set; }

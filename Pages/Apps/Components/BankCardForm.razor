@@ -49,12 +49,12 @@
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
                             <BSCol Class="pl-0">
-                                <MudNumericField @bind-Value="Model.ExpiryMonth" Label="Exp Month" Variant="Variant.Outlined"
-                                             Margin="Margin.Dense" For="@(() => Model.ExpiryMonth)" />
+                                <MudTextField @bind-Value="Model.ExpiryMonth" Label="Expiry Month" Variant="Variant.Outlined" For="@(() => Model.ExpiryMonth)"
+                                          Margin="Margin.Dense"></MudTextField>
                             </BSCol>
                             <BSCol Class="pr-0">
-                                <MudNumericField @bind-Value="Model.ExpiryYear" Label="Exp Year" Variant="Variant.Outlined"
-                                             Margin="Margin.Dense" For="@(() => Model.ExpiryYear)" />
+                                <MudTextField @bind-Value="Model.ExpiryYear" Label="Expiry Year" Variant="Variant.Outlined" For="@(() => Model.ExpiryYear)"
+                                          Margin="Margin.Dense"></MudTextField>
                             </BSCol>
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
@@ -198,7 +198,8 @@
                     if (cardResponse.IsCardAdded)
                     {
                         Model = new CardDetails();
-                        NavigationManager.NavigateTo("cards");
+                        await SetLoader.InvokeAsync(false);
+                        NavigationManager.NavigateTo("cards", true);
                     }
                     else
                     {
@@ -216,7 +217,8 @@
                     if (cardResponse.IsCardUpdated)
                     {
                         Model = new CardDetails();
-                        NavigationManager.NavigateTo("cards");
+                        await SetLoader.InvokeAsync(false);
+                        NavigationManager.NavigateTo("cards", true);
                     }
                     else
                     {
@@ -225,7 +227,6 @@
                     }
                 }
             }
-
             await SetLoader.InvokeAsync(false);
         }
     }
