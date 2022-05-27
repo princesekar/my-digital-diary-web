@@ -124,6 +124,9 @@
     [CascadingParameter]
     protected EventCallback<bool> SetLoader { get; set; }
 
+    [CascadingParameter]
+    protected EventCallback<CardDetails> UpdatedCard { get; set; }
+
     [Parameter]
     public bool IsAddCard { get; set; }
     [Parameter]
@@ -199,7 +202,7 @@
                     {
                         Model = new CardDetails();
                         await SetLoader.InvokeAsync(false);
-                        NavigationManager.NavigateTo("cards", true);
+                        NavigationManager.NavigateTo("cards");
                     }
                     else
                     {
@@ -216,9 +219,10 @@
                 {
                     if (cardResponse.IsCardUpdated)
                     {
+                        await UpdatedCard.InvokeAsync(Model);
                         Model = new CardDetails();
                         await SetLoader.InvokeAsync(false);
-                        NavigationManager.NavigateTo("cards", true);
+                        NavigationManager.NavigateTo("cards");
                     }
                     else
                     {
@@ -236,6 +240,7 @@
         submitLabel = IsAddCard ? "Add" : "Update";
         if (!IsAddCard)
         {
+            Model.Id = Id;
             Model.BankName = BankName;
             Model.CardHolderName = CardHolderName;
             Model.CardNumber = CardNumber;

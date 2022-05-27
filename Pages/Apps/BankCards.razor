@@ -10,28 +10,30 @@
 
 <MediaQuery Media="@BlazorPro.BlazorSize.Breakpoints.SmallDown" @bind-Matches="IsSmall" />
 
-<AppLayout ClassName="bank-cards" Heading="Cards">
-    @if (cards.Count > 0)
-    {
-        foreach (CardDetails card in cards)
+<CascadingValue Value=UpdateCard>
+    <AppLayout ClassName="bank-cards" Heading="Cards">
+        @if (cards.Count > 0)
         {
-            <BankCard CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
-              HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" OnClick="() => OnUpdateClick(card)"></BankCard>
+            foreach (CardDetails card in cards)
+            {
+                <BankCard CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
+                  HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" OnClick="() => OnUpdateClick(card)"></BankCard>
+            }
+            <div class="position-fixed fixed-bottom add-card">
+                <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                    Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+            </div>
         }
-        <div class="position-fixed fixed-bottom add-card">
-            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
-                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
-        </div>
-    }
-    else
-    {
-        <div class="d-flex align-items-center mx-auto my-0 add-icon-wrapper">
-            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
-                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
-        </div>
+        else
+        {
+            <div class="d-flex align-items-center mx-auto my-0 add-icon-wrapper">
+                <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                    Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+            </div>
 
-    }
-</AppLayout>
+        }
+    </AppLayout>
+</CascadingValue>
 
 <style>
     .add-card {
@@ -59,7 +61,7 @@
         {
             cards = await Http.GetFromJsonAsync<List<CardDetails>>("https://mydigitaldiaryservice.azurewebsites.net/getCards/" + userState.LoggedInUserID);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Snackbar.Add(e.Message, Severity.Error);
             await SetLoader.InvokeAsync(false);
@@ -72,6 +74,22 @@
         var parameters = new DialogParameters();
         parameters.Add("IsAddCard", true);
         DialogService.Show<BankCardForm>("Add Card", parameters, new DialogOptions { CloseButton = true });
+    }
+
+    public void UpdateCard(CardDetails updatedCard)
+    {
+        var prevCard = cards.FirstOrDefault(data => data.Id == updatedCard.Id);
+        if (prevCard != null)
+        {
+            prevCard.BankName = updatedCard.BankName;
+            prevCard.CardHolderName = updatedCard.CardHolderName;
+            prevCard.CardNumber = updatedCard.CardNumber;
+            prevCard.CVV = updatedCard.CVV;
+            prevCard.ExpiryMonth = updatedCard.ExpiryMonth;
+            prevCard.ExpiryYear = updatedCard.ExpiryYear;
+            prevCard.Pin = updatedCard.Pin;
+            StateHasChanged();
+        }
     }
 
     private void OnUpdateClick(CardDetails card)
