@@ -1,4 +1,4 @@
-﻿<MudDialog>
+﻿<MudDialog Class="theme-popup">
     <DialogContent>
         <div class="theme-container">
             <BSContainer Container="Container.Fluid">
@@ -23,6 +23,10 @@
 </MudDialog>
 
 <style>
+    .theme-popup .mud-dialog-content {
+        padding: 0.5rem 0;
+    }
+
     .theme-container {
         max-height: calc(100vh - 4.875rem);
         overflow-y: scroll

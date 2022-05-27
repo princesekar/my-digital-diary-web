@@ -1,6 +1,92 @@
 ﻿@page "/cards"
-<h3>BankCards</h3>
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@inject HttpClient Http
+@inject UserState userState;
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService;
+
+<MediaQuery Media="@BlazorPro.BlazorSize.Breakpoints.SmallDown" @bind-Matches="IsSmall" />
+
+<AppLayout ClassName="bank-cards" Heading="Cards">
+    @if (cards.Count > 0)
+    {
+        foreach (CardDetails card in cards)
+        {
+            <BankCard CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
+              HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" @onclick="() => OnUpdateClick(card)"></BankCard>
+        }
+        <div class="position-fixed fixed-bottom add-card">
+            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+        </div>
+    }
+    else
+    {
+        <div class="d-flex align-items-center mx-auto my-0 add-icon-wrapper">
+            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+        </div>
+
+    }
+</AppLayout>
+
+<style>
+    .add-card {
+        right: 2rem;
+        bottom: 2rem;
+        left: initial;
+    }
+
+    .add-icon-wrapper {
+        min-height: 66vh;
+    }
+</style>
+
 
 @code {
+    public bool IsSmall { get; set; }
+    private List<CardDetails> cards = new List<CardDetails>();
+    [CascadingParameter]
+    protected EventCallback<bool> SetLoader { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await SetLoader.InvokeAsync(true);
+        try
+        {
+            cards = await Http.GetFromJsonAsync<List<CardDetails>>("https://mydigitaldiaryservice.azurewebsites.net/getCards/" + userState.LoggedInUserID);
+        }
+        catch(Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Error);
+            await SetLoader.InvokeAsync(false);
+        }
+        await SetLoader.InvokeAsync(false);
+    }
+
+    private void OnAddIconClick()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("IsAddCard", true);
+        DialogService.Show<BankCardForm>("Add Card", parameters, new DialogOptions { CloseButton = true });
+    }
+
+    private void OnUpdateClick(CardDetails card)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Id", card.Id);
+        parameters.Add("IsAddCard", false);
+        parameters.Add("BankName", card.BankName);
+        parameters.Add("CardNumber", card.CardNumber);
+        parameters.Add("ExpiryMonth", card.ExpiryMonth);
+        parameters.Add("ExpiryYear", card.ExpiryYear);
+        parameters.Add("CardHolderName", card.CardHolderName);
+        parameters.Add("CVV", card.CVV);
+        parameters.Add("Pin", card.Pin);
+        DialogService.Show<BankCardForm>("Update Card", parameters, new DialogOptions { CloseButton = true });
+    }
 }
+
