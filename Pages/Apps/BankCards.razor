@@ -17,7 +17,7 @@
         <BSRow>
             @foreach (CardDetails card in cards)
             {
-                string imagePath = Banks.BankNames.ContainsKey(card.BankName) ? Banks.BankNames[card.BankName] : Banks.BankNames.FirstOrDefault().Key;
+                string imagePath = Banks.BankNames.ContainsKey(card.BankName) ? Banks.BankNames[card.BankName] : Banks.BankNames[Banks.BankNames.FirstOrDefault().Key];
                 <BankCard @key="@card.Id" CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
                   HolderName="@card.CardHolderName" ImagePath="@("images/banks/" + imagePath)" IsSmallDevice="IsSmall"
                   OnClick="() => OnUpdateClick(card)"></BankCard>
@@ -92,7 +92,7 @@
             cards = await Http.GetFromJsonAsync<List<CardDetails>>("https://mydigitaldiaryservice.azurewebsites.net/getCards/" + userState.LoggedInUserID);
             for (var i = 0; i <= cards.Count; i++)
             {
-                string imagePath = Banks.BankNames.ContainsKey(cards[i].BankName) ? Banks.BankNames[cards[i].BankName] : Banks.BankNames.FirstOrDefault().Key;
+                string imagePath = Banks.BankNames.ContainsKey(cards[i].BankName) ? Banks.BankNames[cards[i].BankName] : Banks.BankNames[Banks.BankNames.FirstOrDefault().Key];
                 cards[i].ImagePath = "images/banks/" + Banks.BankNames[cards[i].BankName];
             }
         }
