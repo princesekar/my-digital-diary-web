@@ -7,6 +7,25 @@
 @inject NavigationManager NavigationManager
 
 <MudDialog Class="bank-card-popup">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @if (!IsAddCard)
+            {
+                <div class="d-flex align-items-center">
+                    <BSCol>Update Card</BSCol>
+                    <BSCol>
+                        <div class="d-flex justify-content-end mr-10" role="button" @onclick="() => OnFormAction(true)">
+                            <MudIcon Icon="@Icons.Filled.Delete" />
+                        </div>
+                    </BSCol>
+                </div>
+            }
+            else
+            {
+                <span>Add Card</span>
+            }
+        </MudText>
+    </TitleContent>
     <DialogContent>
         <div class="bank-card-form">
             @if (IsAddCard && Model.BankName == null)
@@ -29,7 +48,7 @@
             }
             else
             {
-                <EditForm Model="Model" OnSubmit="OnSubmit">
+                <EditForm Model="Model" OnValidSubmit="() => OnFormAction(false)">
                     <DataAnnotationsValidator />
                     <BSContainer Container="Container.Fluid">
                         <BSRow MarginBottom="Margins.ExtraLarge">
@@ -49,12 +68,22 @@
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
                             <BSCol Class="pl-0">
-                                <MudTextField @bind-Value="Model.ExpiryMonth" Label="Expiry Month" Variant="Variant.Outlined" For="@(() => Model.ExpiryMonth)"
-                                          Margin="Margin.Dense"></MudTextField>
+                                <MudSelect T="string" @bind-Value="Model.ExpiryMonth" Label="Expiry Month" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense"
+                                       For="@(() => Model.ExpiryMonth)">
+                                    @for (var i = 1; i <= 12; i++)
+                                    {
+                                        <MudSelectItem T="string" Value="@(String.Format("{0:00}", i))" />
+                                    }
+                                </MudSelect>
                             </BSCol>
                             <BSCol Class="pr-0">
-                                <MudTextField @bind-Value="Model.ExpiryYear" Label="Expiry Year" Variant="Variant.Outlined" For="@(() => Model.ExpiryYear)"
-                                          Margin="Margin.Dense"></MudTextField>
+                                <MudSelect T="string" @bind-Value="Model.ExpiryYear" Label="Expiry Year" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Margin="Margin.Dense"
+                                       For="@(() => Model.ExpiryYear)">
+                                    @for (var i = 2022; i <= 2040; i++)
+                                    {
+                                        <MudSelectItem T="string" Value="i.ToString()" />
+                                    }
+                                </MudSelect>
                             </BSCol>
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
@@ -65,11 +94,11 @@
                         <BSRow MarginBottom="Margins.ExtraLarge">
                             <BSCol Class="pl-0">
                                 <MudTextField @bind-Value="Model.CVV" Label="CVV" Variant="Variant.Outlined" For="@(() => Model.CVV)" Margin="Margin.Dense"
-                                          InputType="@CVVInput" Adornment="Adornment.End" AdornmentIcon="@CVVIcon" OnAdornmentClick="OnCVVIconClick"></MudTextField>
+                                          InputType="@CVVInput" MaxLength="3" Adornment="Adornment.End" AdornmentIcon="@CVVIcon" OnAdornmentClick="OnCVVIconClick"></MudTextField>
                             </BSCol>
                             <BSCol Class="pr-0">
                                 <MudTextField @bind-Value="Model.Pin" Label="Pin" Variant="Variant.Outlined" For="@(() => Model.Pin)" Margin="Margin.Dense"
-                                          InputType="@PinInput" Adornment="Adornment.End" AdornmentIcon="@PinIcon" OnAdornmentClick="OnPinIconClick"></MudTextField>
+                                          InputType="@PinInput" MaxLength="4" Adornment="Adornment.End" AdornmentIcon="@PinIcon" OnAdornmentClick="OnPinIconClick"></MudTextField>
                             </BSCol>
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
@@ -112,6 +141,7 @@
 </style>
 
 @code {
+    private bool isUpdating;
     private bool pinVisible;
     private bool cvvVisible;
     private string submitLabel;
@@ -122,10 +152,10 @@
     string CVVIcon = Icons.Material.Filled.VisibilityOff;
 
     [CascadingParameter]
-    protected EventCallback<bool> SetLoader { get; set; }
+    public MudDialogInstance MudDialog { get; set; }
 
     [CascadingParameter]
-    protected EventCallback<CardDetails> UpdatedCard { get; set; }
+    protected EventCallback<bool> SetLoader { get; set; }
 
     [Parameter]
     public bool IsAddCard { get; set; }
@@ -185,60 +215,57 @@
         ImagePath = "images/banks/" + imagePath;
     }
 
-    private async Task OnSubmit(EditContext e)
+    private async Task OnFormAction(bool isDeleted = false)
     {
-        if (e.Validate())
+        MudDialog.Close(DialogResult.Ok(true));
+        await SetLoader.InvokeAsync(true);
+        Model.UserName = userState.LoggedInUserID;
+        string apiPath = "updateCard";
+        var model = Model;
+        if (IsAddCard)
         {
-            await SetLoader.InvokeAsync(true);
-            Model.UserName = userState.LoggedInUserID;
-            if (IsAddCard)
+            model.Id = Guid.NewGuid();
+            model.ImagePath = ImagePath;
+            apiPath = "addCard";
+        }
+        else if (isDeleted)
+        {
+            apiPath = "removeCard";
+        }
+        else
+        {
+            isUpdating = true;
+        }
+        HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/" + apiPath, model);
+        CardApiResponse? cardResponse = await response.Content.ReadFromJsonAsync<CardApiResponse>();
+        if (cardResponse != null)
+        {
+            if (cardResponse.IsCardAdded)
             {
-                Model.Id = Guid.NewGuid();
-                HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/addCard", Model);
-                CardApiResponse? cardResponse = await response.Content.ReadFromJsonAsync<CardApiResponse>();
-                if (cardResponse != null)
-                {
-                    if (cardResponse.IsCardAdded)
-                    {
-                        Model = new CardDetails();
-                        await SetLoader.InvokeAsync(false);
-                        NavigationManager.NavigateTo("cards");
-                    }
-                    else
-                    {
-                        var errorMessage = cardResponse.ErrorMessage != null ? cardResponse.ErrorMessage : "Something went wrong. Try again!";
-                        Snackbar.Add(errorMessage, Severity.Error);
-                    }
-                }
+                await userState.NotifyFormAction(model, CRUD.Add);
+            }
+            else if (cardResponse.IsCardUpdated)
+            {
+                await userState.NotifyFormAction(model, CRUD.Update);
+            }
+            else if (cardResponse.IsCardDeleted)
+            {
+                await userState.NotifyFormAction(model, CRUD.Delete);
             }
             else
             {
-                HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/updateCard", Model);
-                CardApiResponse? cardResponse = await response.Content.ReadFromJsonAsync<CardApiResponse>();
-                if (cardResponse != null)
-                {
-                    if (cardResponse.IsCardUpdated)
-                    {
-                        await UpdatedCard.InvokeAsync(Model);
-                        Model = new CardDetails();
-                        await SetLoader.InvokeAsync(false);
-                        NavigationManager.NavigateTo("cards");
-                    }
-                    else
-                    {
-                        var errorMessage = cardResponse.ErrorMessage != null ? cardResponse.ErrorMessage : "Something went wrong. Try again!";
-                        Snackbar.Add(errorMessage, Severity.Error);
-                    }
-                }
+                var errorMessage = cardResponse.ErrorMessage != null ? cardResponse.ErrorMessage : "Something went wrong. Try again!";
+                Snackbar.Add(errorMessage, Severity.Error);
             }
-            await SetLoader.InvokeAsync(false);
+            isUpdating = false;
         }
+        await SetLoader.InvokeAsync(false);
     }
 
     protected override void OnParametersSet()
     {
         submitLabel = IsAddCard ? "Add" : "Update";
-        if (!IsAddCard)
+        if (!IsAddCard && !isUpdating)
         {
             Model.Id = Id;
             Model.BankName = BankName;
@@ -248,6 +275,7 @@
             Model.ExpiryMonth = ExpiryMonth;
             Model.ExpiryYear = ExpiryYear;
             Model.Pin = Pin;
+            Model.ImagePath = ImagePath;
         }
     }
 }

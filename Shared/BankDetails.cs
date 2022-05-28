@@ -27,6 +27,7 @@
         [Required(ErrorMessage = "Bank name is required.")]
         public string BankName { get; set; }
         [JsonPropertyName("card_number")]
+        [CreditCard(ErrorMessage ="Enter a valid card number.")]
         [Required(ErrorMessage = "Card number is required.")]
         public string CardNumber { get; set; }
         [JsonPropertyName("expiry_month")]
@@ -40,10 +41,13 @@
         public string CardHolderName { get; set; }
         [JsonPropertyName("cvv")]
         [Required(ErrorMessage = "CVV is required.")]
+        [RegularExpression(@"^[0-9]{3}$", ErrorMessage = "Not a valid cvv number.")]
         public int? CVV { get; set; }
         [JsonPropertyName("pin")]
         [Required(ErrorMessage = "Pin is required.")]
+        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "Not a valid pin number.")]
         public int? Pin { get; set; }
+        public string ImagePath { get; set; }
     }
 
     public class CardApiResponse
@@ -78,5 +82,12 @@
             {"Tamilnad Mercantile Bank", "tmb.webp" },
             {"Union Bank of India", "union.webp" }
         };
+    }
+
+    public enum CRUD
+    {
+        Add,
+        Update,
+        Delete
     }
 }

@@ -1,10 +1,10 @@
 ﻿<BSCol ColumnLarge="6" ColumnMedium="12" Column="12">
     <MudPaper Class="d-flex flex-column bank-card" Elevation="3" @onclick="OnClick">
         <BSRow MarginBottom="@(IsSmallDevice ? Margins.Small : Margins.Large)">
-            <BSCol>
+            <BSCol Column="8">
                 <MudText Typo="Typo.h6" Class="bank-name">@BankName</MudText>
             </BSCol>
-            <BSCol>
+            <BSCol Column="4">
                 <MudIcon Class="d-flex ml-auto" Icon="@Icons.Filled.Wifi" Size="MudBlazor.Size.Medium"></MudIcon>
             </BSCol>
         </BSRow>
@@ -20,30 +20,11 @@
                 <MudText Typo="Typo.h6" Class="holder-name">@HolderName</MudText>
             </BSCol>
             <BSCol>
-                <MudAvatar Class="d-flex ml-auto" Size="@(IsSmallDevice ? MudBlazor.Size.Small : MudBlazor.Size.Medium)" Image="@ImagePath" />
+                <MudAvatar Class="d-flex ml-auto bank-logo" Size="@(IsSmallDevice ? MudBlazor.Size.Small : MudBlazor.Size.Medium)" Image="@ImagePath" />
             </BSCol>
         </BSRow>
     </MudPaper>
 </BSCol>
-
-<style>
-    .bank-card {
-        padding: 40px;
-        margin: 8px;
-        cursor: pointer;
-    }
-
-    @@media (max-width: 500px) {
-        .bank-card {
-            padding: 10px;
-            margin: 0;
-        }
-
-            .bank-card h6 {
-                font-size: 1rem;
-            }
-    }
-</style>
 
 @code {
 
@@ -74,7 +55,7 @@
     [Parameter]
     public bool IsSmallDevice { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         cardNumber = String.Format("{0:0000 0000 0000 0000}", Int64.Parse(CardNumber));
         expiryDate = ExpiryMonth + "/" + ExpiryYear;

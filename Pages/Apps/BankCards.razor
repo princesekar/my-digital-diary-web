@@ -7,33 +7,37 @@
 @inject UserState userState;
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService;
+@implements IDisposable
 
 <MediaQuery Media="@BlazorPro.BlazorSize.Breakpoints.SmallDown" @bind-Matches="IsSmall" />
 
-<CascadingValue Value=UpdateCard>
-    <AppLayout ClassName="bank-cards" Heading="Cards">
-        @if (cards.Count > 0)
-        {
-            foreach (CardDetails card in cards)
+<AppLayout ClassName="bank-cards" Heading="Cards">
+    @if (cards.Count > 0)
+    {
+        <BSRow>
+            @foreach (CardDetails card in cards)
             {
-                <BankCard CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
-                  HolderName="@card.CardHolderName" ImagePath="" IsSmallDevice="IsSmall" OnClick="() => OnUpdateClick(card)"></BankCard>
+                string imagePath = Banks.BankNames.ContainsKey(card.BankName) ? Banks.BankNames[card.BankName] : Banks.BankNames.FirstOrDefault().Key;
+                <BankCard @key="@card.Id" CardNumber="@card.CardNumber" BankName="@card.BankName" ExpiryMonth="@card.ExpiryMonth" ExpiryYear="@card.ExpiryYear"
+                  HolderName="@card.CardHolderName" ImagePath="@("images/banks/" + imagePath)" IsSmallDevice="IsSmall"
+                  OnClick="() => OnUpdateClick(card)"></BankCard>
             }
-            <div class="position-fixed fixed-bottom add-card">
-                <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
-                    Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
-            </div>
-        }
-        else
-        {
-            <div class="d-flex align-items-center mx-auto my-0 add-icon-wrapper">
-                <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
-                    Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
-            </div>
+        </BSRow>
 
-        }
-    </AppLayout>
-</CascadingValue>
+        <div class="position-fixed fixed-bottom add-card">
+            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+        </div>
+    }
+    else
+    {
+        <div class="d-flex align-items-center mx-auto my-0 add-icon-wrapper">
+            <MudFab Size="MudBlazor.Size.Large" StartIcon="@Icons.Material.Filled.Add" OnClick="OnAddIconClick"
+                Style="@($"background:{userState.Theme};color:{MudBlazor.Colors.Shades.White};" )" />
+        </div>
+
+    }
+</AppLayout>
 
 <style>
     .add-card {
@@ -45,8 +49,33 @@
     .add-icon-wrapper {
         min-height: 66vh;
     }
-</style>
 
+    .bank-card {
+        padding: 40px;
+        margin: 8px;
+        cursor: pointer;
+    }
+
+        .bank-card .bank-logo {
+            background: transparent;
+            border: 1px solid #dadce0;
+        }
+
+        .bank-card .mud-avatar-img {
+            height: auto;
+        }
+
+    @@media (max-width: 500px) {
+        .bank-card {
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+            .bank-card h6 {
+                font-size: 1rem;
+            }
+    }
+</style>
 
 @code {
     public bool IsSmall { get; set; }
@@ -56,10 +85,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        userState.OnCrudAction += CardAction;
         await SetLoader.InvokeAsync(true);
         try
         {
             cards = await Http.GetFromJsonAsync<List<CardDetails>>("https://mydigitaldiaryservice.azurewebsites.net/getCards/" + userState.LoggedInUserID);
+            for (var i = 0; i <= cards.Count; i++)
+            {
+                string imagePath = Banks.BankNames.ContainsKey(cards[i].BankName) ? Banks.BankNames[cards[i].BankName] : Banks.BankNames.FirstOrDefault().Key;
+                cards[i].ImagePath = "images/banks/" + Banks.BankNames[cards[i].BankName];
+            }
         }
         catch (Exception e)
         {
@@ -76,22 +111,6 @@
         DialogService.Show<BankCardForm>("Add Card", parameters, new DialogOptions { CloseButton = true });
     }
 
-    public void UpdateCard(CardDetails updatedCard)
-    {
-        var prevCard = cards.FirstOrDefault(data => data.Id == updatedCard.Id);
-        if (prevCard != null)
-        {
-            prevCard.BankName = updatedCard.BankName;
-            prevCard.CardHolderName = updatedCard.CardHolderName;
-            prevCard.CardNumber = updatedCard.CardNumber;
-            prevCard.CVV = updatedCard.CVV;
-            prevCard.ExpiryMonth = updatedCard.ExpiryMonth;
-            prevCard.ExpiryYear = updatedCard.ExpiryYear;
-            prevCard.Pin = updatedCard.Pin;
-            StateHasChanged();
-        }
-    }
-
     private void OnUpdateClick(CardDetails card)
     {
         var parameters = new DialogParameters();
@@ -104,7 +123,32 @@
         parameters.Add("CardHolderName", card.CardHolderName);
         parameters.Add("CVV", card.CVV);
         parameters.Add("Pin", card.Pin);
+        parameters.Add("ImagePath", card.ImagePath);
         DialogService.Show<BankCardForm>("Update Card", parameters, new DialogOptions { CloseButton = true });
+    }
+
+    public void CardAction(object updatedCard, CRUD action)
+    {
+        CardDetails card = (CardDetails)updatedCard;
+        var index = cards.FindIndex(data => data.Id == card.Id);
+        if (action == CRUD.Add)
+        {
+            cards.Insert(0, card);
+        }
+        else if (action == CRUD.Update && index >= 0)
+        {
+            cards[index] = card;
+        }
+        else
+        {
+            cards.RemoveAt(index);
+        }
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        userState.OnCrudAction -= CardAction;
     }
 }
 
