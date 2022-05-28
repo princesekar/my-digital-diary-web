@@ -4,18 +4,26 @@
     using System.ComponentModel.DataAnnotations;
     public class BankDetails
     {
-        [JsonPropertyName("bankName")]
+        [JsonPropertyName("id")]
+        public Guid Id { get; set; }
+        [JsonPropertyName("user_name")]
+        public string UserName { get; set; }
+        [JsonPropertyName("bank_name")]
         [Required(ErrorMessage = "Bank name is required.")]
         public string BankName { get; set; }
         [JsonPropertyName("ifsc")]
         [Required(ErrorMessage = "IFSC code is required.")]
         public string IFSC { get; set; }
-        [JsonPropertyName("accountHolderName")]
+        [JsonPropertyName("account_holder_name")]
         [Required(ErrorMessage = "Account holder name is required.")]
         public string AccountHolderName { get; set; }
-        [JsonPropertyName("accountType")]
+        [JsonPropertyName("account_number")]
+        [Required(ErrorMessage = "Account number is required.")]
+        public string AccountNumber { get; set; }
+        [JsonPropertyName("account_type")]
         [Required(ErrorMessage = "Account holder name is required.")]
         public string AccountType { get; set; }
+        public string ImagePath { get; set; }
     }
     public class CardDetails
     {
@@ -62,6 +70,18 @@
         public string? ErrorMessage { get; set; }
     }
 
+    public class BankAccountApiResponse
+    {
+        [JsonPropertyName("isAccountAdded")]
+        public bool IsAccountAdded { get; set; }
+        [JsonPropertyName("isAccountUpdated")]
+        public bool IsAccountUpdated { get; set; }
+        [JsonPropertyName("isAccountDeleted")]
+        public bool IsAccountDeleted { get; set; }
+        [JsonPropertyName("error")]
+        public string? ErrorMessage { get; set; }
+    }
+
     public static class Banks
     {
         public static Dictionary<string, string> BankNames { get; set; } = new Dictionary<string, string>()
@@ -81,6 +101,17 @@
             {"State Bank of India", "sbi.png" },
             {"Tamilnad Mercantile Bank", "tmb.webp" },
             {"Union Bank of India", "union.webp" }
+        };
+
+        public static List<string> AccountTypes { get; set; } = new List<string>()
+        {
+            "Saving Account",
+            "Current Account",
+            "Checking Account",
+            "Women Saving Account",
+            "Students Saving Account",
+            "Kids Account",
+            "Others"
         };
     }
 
