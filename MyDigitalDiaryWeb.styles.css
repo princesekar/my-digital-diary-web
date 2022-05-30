@@ -1,0 +1,258 @@
+@import '_content/BlazorStrap/BlazorStrap.bundle.scp.css';
+
+/* /Pages/Apps/Components/AppCard.razor.rz.scp.css */
+[b-fm2ajsrb7n] .app-card-paper {
+  padding: 4rem;
+  max-height: 8rem;
+  margin: 1.5rem 0.5rem;
+  display: flex;
+  cursor: pointer;
+}
+
+.app-card-content[b-fm2ajsrb7n] {
+  align-items: center;
+  justify-content: center;
+}
+
+.app-card-title[b-fm2ajsrb7n] {
+  padding-left: 1.5rem;
+}
+
+.app-card-title[b-fm2ajsrb7n]  .mud-typography-button {
+  line-height: 1.5;
+  font-family: "Roboto";
+  text-transform: none;
+  font-size: 1rem;
+}
+
+@media (max-width: 75rem) {
+  [b-fm2ajsrb7n] .app-card-paper {
+    padding: 2.5rem;
+    min-height: 8rem;
+  }
+  .app-card-title[b-fm2ajsrb7n] {
+    padding-left: 1rem;
+  }
+}
+
+@media (max-width: 31.25rem) {
+  [b-fm2ajsrb7n] .app-card-paper {
+    padding: 1.5rem 1rem;
+    min-height: 6rem;
+    margin: 0 0 1rem 0;
+  }
+}
+/* /Pages/Apps/Components/ThemeCard.razor.rz.scp.css */
+.themer-card-content[b-vqbui9wm7h] {
+  justify-content: center;
+  align-items: center;
+}
+
+[b-vqbui9wm7h] .theme-card-paper {
+  padding: 4rem;
+  max-height: 8rem;
+  margin: 1.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@media (max-width: 61.9375rem) {
+  [b-vqbui9wm7h] .theme-card-paper {
+    padding: 2.5rem;
+    min-height: 8rem;
+  }
+}
+
+@media (max-width: 31.25rem) {
+  [b-vqbui9wm7h] .theme-card-paper {
+    padding: 1.5rem 0.5rem;
+    min-height: 6rem;
+  }
+}
+/* /Pages/Apps/Dashboard.razor.rz.scp.css */
+.dashboard-wrapper[b-le3lvohvzm] {
+  margin-top: 3.125rem;
+}
+
+.dashboard-wrapper[b-le3lvohvzm]  .col-6 {
+  padding-left: 0;
+}
+
+@media (max-width: 61.9375rem) {
+  .dashboard-wrapper[b-le3lvohvzm] {
+    margin-top: 2.5rem;
+  }
+}
+
+@media (max-width: 31.25rem) {
+  .dashboard-wrapper[b-le3lvohvzm] {
+    margin-top: 1.875rem;
+  }
+
+  .dashboard-wrapper[b-le3lvohvzm] .container {
+    padding: 0;
+  }
+
+  .dashboard-wrapper[b-le3lvohvzm]  .col-6 {
+    padding: 0 0.5rem;
+  }
+
+  .dashboard-wrapper[b-le3lvohvzm]  .col-6:nth-child(odd) {
+    padding-left: 1rem;
+  }
+
+  .dashboard-wrapper[b-le3lvohvzm]  .col-6:nth-child(even) {
+    padding-right: 1rem;
+  }
+}
+/* /Pages/UserLogin/UserLogin.razor.rz.scp.css */
+.align-items-center div[b-0flvq9n72t] {
+  text-align: center;
+}
+/* /Shared/AppLayout.razor.rz.scp.css */
+.app-container[b-jj6888qbg8] {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 5rem);
+  position: relative;
+}
+
+.app-container *[b-jj6888qbg8] {
+  box-sizing: inherit;
+}
+
+.app-container[b-jj6888qbg8]::before,
+.app-container[b-jj6888qbg8]::after {
+  content: "";
+  display: block;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+
+.app-container[b-jj6888qbg8]::before {
+  min-height: 1.875rem;
+  height: 1.875rem;
+}
+
+.app-container[b-jj6888qbg8]::after {
+  min-height: 4rem;
+  height: 1.5rem;
+}
+
+.app-container.world-clock .app-inner-layout[b-jj6888qbg8],
+.app-container.bank-cards .app-inner-layout[b-jj6888qbg8],
+.app-container.bank-accounts .app-inner-layout[b-jj6888qbg8],
+.app-container.todo-list .app-inner-layout[b-jj6888qbg8] {
+  width: 100%;
+}
+
+.app-container.bank-cards[b-jj6888qbg8],
+.app-container.bank-accounts[b-jj6888qbg8],
+.app-container.todo-list[b-jj6888qbg8] {
+  min-height: auto;
+}
+
+.app-container.bank-cards[b-jj6888qbg8]::before,
+.app-container.bank-accounts[b-jj6888qbg8]::before,
+.app-container.todo-list[b-jj6888qbg8]::before {
+  height: auto;
+}
+
+.app-inner-layout[b-jj6888qbg8] {
+  width: 28.125rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dadce0;
+  margin: 0 auto;
+  min-height: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  padding: 3rem 2.5rem 2.25rem;
+  margin-top: 1.25rem;
+}
+
+.app-inner-layout[b-jj6888qbg8]  #mud-snackbar-container {
+  position: absolute;
+  top: -2.5rem;
+  width: 95%;
+}
+
+@media (max-width: 31.25rem) {
+  .app-container.world-clock .app-inner-layout[b-jj6888qbg8],
+  .app-container.bank-cards .app-inner-layout[b-jj6888qbg8],
+  .app-container.bank-accounts .app-inner-layout[b-jj6888qbg8],
+  .app-container.todo-list .app-inner-layout[b-jj6888qbg8] {
+    padding: 1.5rem 1.25rem 1.125rem;
+  }
+
+  .app-container[b-jj6888qbg8]::after {
+    height: 0;
+    min-height: 0;
+  }
+}
+/* /Shared/MainLayout.razor.rz.scp.css */
+html[b-nvf7afgd2g],
+body[b-nvf7afgd2g] {
+  margin: 0;
+  height: 100%;
+}
+
+.page[b-nvf7afgd2g] {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #f3f6f7;
+  height: 100vh;
+}
+
+main[b-nvf7afgd2g] {
+  flex: 1;
+}
+
+header[b-nvf7afgd2g] {
+  height: 5rem;
+  flex-direction: row;
+}
+
+#mud-snackbar-container[b-nvf7afgd2g] {
+  position: absolute;
+  top: 0;
+  width: 75%;
+}
+
+h1[b-nvf7afgd2g] {
+  font-family: cursive;
+  position: absolute;
+}
+
+@media (max-width: 61.9375rem) {
+  h1[b-nvf7afgd2g] {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 40.06125rem) {
+  header[b-nvf7afgd2g] {
+    height: 3.75rem;
+  }
+
+  h1[b-nvf7afgd2g] {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 40.0625rem) {
+  .page[b-nvf7afgd2g] {
+    flex-direction: row;
+  }
+}
+
+@media only screen and (max-width: 61.9375rem) and (orientation: landscape) {
+  .page[b-nvf7afgd2g] {
+    height: auto;
+  }
+}
