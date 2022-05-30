@@ -68,7 +68,7 @@
         width: 3.5rem;
     }
 
-    @@media (max-width: 500px) {
+    @@media (max-width: 31.25rem) {
         .stop-watch .app-inner-layout {
             padding: 1.5rem 1.25rem 1.125rem;
         }
@@ -82,7 +82,6 @@
             font-size: 2rem;
         }
     }
-
 </style>
 
 @code {
@@ -91,7 +90,7 @@
     private TimeSpan displayTime = default;
     private RecurringOperation timerOperation;
     private RecurringOperation blinkOperation;
-    private List<LapsTable>? lapsData { get; set; }
+    private List<LapsTable> lapsData { get; set; }
 
     protected override void OnInitialized()
     {
@@ -112,7 +111,7 @@
         public TimeSpan SplitTime { get; set; }
     }
 
-    public void OnPlayPause(bool isRunning)
+    private void OnPlayPause(bool isRunning)
     {
         if (isRunning)
         {
@@ -133,33 +132,33 @@
         }
     }
 
-    public void StopTimer()
+    private void StopTimer()
     {
         lapsData?.Clear();
         Recurop.CancelRecurring(timerOperation);
         Recurop.CancelRecurring(blinkOperation);
     }
 
-    public void LapTime()
+    private void LapTime()
     {
         var lapsTime = lapsData.Count == 0 ? displayTime : displayTime - lapsData.Last().SplitTime;
         lapsData.Add(new LapsTable() { Number = lapsData.Count + 1, LapTime = lapsTime, SplitTime = displayTime });
     }
 
-    public void IncrementTimer()
+    private void IncrementTimer()
     {
         elapsedSeconds++;
         displayTime = TimeSpan.FromSeconds(elapsedSeconds);
         StateHasChanged();
     }
 
-    public void BlinkTimer()
+    private void BlinkTimer()
     {
         isTimerVisible = !isTimerVisible;
         StateHasChanged();
     }
 
-    public void BlinkerOperationStatusChanged()
+    private void BlinkerOperationStatusChanged()
     {
         if (blinkOperation.Status == RecurringOperationStatus.Cancelled)
         {
@@ -167,7 +166,7 @@
         }
     }
 
-    public void TimerOperationStatusChanged()
+    private void TimerOperationStatusChanged()
     {
         if (timerOperation.Status == RecurringOperationStatus.Cancelled)
         {

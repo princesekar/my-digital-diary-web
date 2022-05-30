@@ -21,19 +21,19 @@
     public MudDialogInstance MudDialog { get; set; }
 
     [CascadingParameter]
-    protected EventCallback<bool> SetLoader { get; set; }
+    public EventCallback<bool> SetLoader { get; set; }
 
-    public void OnMouseEnter()
+    private void OnMouseEnter()
     {
         elevation = 3;
     }
 
-    public void OnMouseLeave()
+    private void OnMouseLeave()
     {
         elevation = 0;
     }
 
-    public async Task OnCardClick()
+    private async Task OnCardClick()
     {
         MudDialog.Close(DialogResult.Ok(true));
         await userState.SetTheme(Background);

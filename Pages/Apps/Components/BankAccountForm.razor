@@ -82,7 +82,8 @@
                             </MudSelect>
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="MudBlazor.Size.Large" ButtonType="ButtonType.Submit" FullWidth="true">@submitLabel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="MudBlazor.Size.Large" ButtonType="ButtonType.Submit"
+                                   FullWidth="true" Style="@($"background:{userState.Theme}")">@submitLabel</MudButton>
                         </BSRow>
                     </BSContainer>
                 </EditForm>
@@ -105,14 +106,14 @@
         width: 100%;
     }
 
-        .bank-account-popup .bank-logo {
-            background: transparent;
-            border: 1px solid #dadce0;
-        }
+    .bank-account-popup .bank-logo {
+        background: transparent;
+        border: 1px solid #dadce0;
+    }
 
-        .bank-account-popup .mud-avatar-img {
-            height: auto;
-        }
+    .bank-account-popup .mud-avatar-img {
+        height: auto;
+    }
 
     .bank-account-form {
         max-height: calc(100vh - 4.875rem);
@@ -121,6 +122,14 @@
 
     .bank-account-form .mud-select {
         padding: 0;
+    }
+
+    .bank-account-popup .mud-input.mud-input-outlined:focus-within .mud-input-outlined-border {
+        border-color: @userState.Theme;
+    }
+
+    .bank-account-popup .mud-input:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
+        color: @userState.Theme;
     }
 </style>
 
@@ -133,7 +142,7 @@
     public MudDialogInstance MudDialog { get; set; }
 
     [CascadingParameter]
-    protected EventCallback<bool> SetLoader { get; set; }
+    public EventCallback<bool> SetLoader { get; set; }
 
     [Parameter]
     public bool IsAddAccount { get; set; }
@@ -180,7 +189,7 @@
             isUpdating = true;
         }
         HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/" + apiPath, model);
-        BankAccountApiResponse? cardResponse = await response.Content.ReadFromJsonAsync<BankAccountApiResponse>();
+        BankAccountApiResponse cardResponse = await response.Content.ReadFromJsonAsync<BankAccountApiResponse>();
         if (cardResponse != null)
         {
             if (cardResponse.IsAccountAdded)

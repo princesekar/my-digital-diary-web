@@ -50,36 +50,36 @@
     }
 
     .bank-account {
-        padding: 40px;
-        margin: 8px;
+        padding: 2.5rem;
+        margin: 0.5rem;
         cursor: pointer;
     }
 
-        .bank-account .bank-logo {
-            background: transparent;
-            border: 1px solid #dadce0;
-            width: 100px;
-            height: 100px;
-        }
+    .bank-account .bank-logo {
+        background: transparent;
+        border: 1px solid #dadce0;
+        width: 6.25rem;
+        height: 6.25rem;
+    }
 
-        .bank-account .mud-avatar-img {
-            height: auto;
-        }
+    .bank-account .mud-avatar-img {
+        height: auto;
+    }
 
-    @@media (max-width: 500px) {
+    @@media (max-width: 31.25rem) {
         .bank-account {
-            padding: 10px;
-            margin: 8px 0;
+            padding: 0.625rem;
+            margin: 0.5rem 0;
         }
 
-            .bank-account h6 {
-                font-size: 1rem;
-            }
+        .bank-account h6 {
+            font-size: 1rem;
+        }
 
-            .bank-account .bank-logo {
-                width: 50px;
-                height: 50px;
-            }
+        .bank-account .bank-logo {
+            width: 3.125rem;
+            height: 3.125rem;
+        }
     }
 </style>
 
@@ -88,6 +88,9 @@
     private List<BankDetails> accounts = new List<BankDetails>();
     [CascadingParameter]
     protected EventCallback<bool> SetLoader { get; set; }
+
+    [CascadingParameter]
+    protected EventCallback RefreshPageHeight { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,7 +134,7 @@
         DialogService.Show<BankAccountForm>("Update Account", parameters, new DialogOptions { CloseButton = true });
     }
 
-    public void AccountAction(object updatedAccount, CRUD action)
+    private void AccountAction(object updatedAccount, CRUD action)
     {
         BankDetails account = (BankDetails)updatedAccount;
         var index = accounts.FindIndex(data => data.Id == account.Id);
@@ -148,10 +151,12 @@
             accounts.RemoveAt(index);
         }
         StateHasChanged();
+        RefreshPageHeight.InvokeAsync();
     }
 
     public void Dispose()
     {
+        Snackbar.Dispose();
         userState.OnCrudAction -= AccountAction;
     }
 }

@@ -32,7 +32,7 @@
     private string expiryDate;
 
     [Parameter]
-    public EventCallback<MouseEventArgs> OnClick {get;set;}
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     [Parameter]
     public string BankName { get; set; }
@@ -60,5 +60,4 @@
         cardNumber = String.Format("{0:0000 0000 0000 0000}", Int64.Parse(CardNumber));
         expiryDate = ExpiryMonth + "/" + ExpiryYear;
     }
-
 }

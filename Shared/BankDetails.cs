@@ -13,12 +13,14 @@
         public string BankName { get; set; }
         [JsonPropertyName("ifsc")]
         [Required(ErrorMessage = "IFSC code is required.")]
+        [RegularExpression(@"^[A-Z]{4}0[A-Z0-9]{6}$", ErrorMessage = "Enter a valid IFSC code.")]
         public string IFSC { get; set; }
         [JsonPropertyName("account_holder_name")]
         [Required(ErrorMessage = "Account holder name is required.")]
         public string AccountHolderName { get; set; }
         [JsonPropertyName("account_number")]
         [Required(ErrorMessage = "Account number is required.")]
+        [RegularExpression(@"^[0-9]{9,18}$", ErrorMessage = "Enter a valid account number.")]
         public string AccountNumber { get; set; }
         [JsonPropertyName("account_type")]
         [Required(ErrorMessage = "Account holder name is required.")]
@@ -67,7 +69,7 @@
         [JsonPropertyName("isCardDeleted")]
         public bool IsCardDeleted { get; set; }
         [JsonPropertyName("error")]
-        public string? ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public class BankAccountApiResponse
@@ -79,7 +81,7 @@
         [JsonPropertyName("isAccountDeleted")]
         public bool IsAccountDeleted { get; set; }
         [JsonPropertyName("error")]
-        public string? ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public static class Banks
@@ -88,19 +90,19 @@
         {
             { "Add Custom Bank", "custom-bank.jpg" },
             { "Axis Bank", "axis.png" },
-            {"Bank of Baroda", "bank-of-baroda.png" },
-            {"Canara Bank", "canara.png" },
-            {"Citi Bank", "citi.jpeg" },
-            {"HDFC Bank", "hdfc.png" },
-            {"HSBC", "hsbc.png" },
-            {"ICICI Bank", "icici.png" },
-            {"Indian Bank", "indian.png" },
-            {"Indian Overseas Bank", "indian-overseas.png" },
-            {"Karur Vysya Bank", "karur-vysya.jpg" },
-            {"Kotak Mahendra Bank", "kotak-mahindra.jpg" },
-            {"State Bank of India", "sbi.png" },
-            {"Tamilnad Mercantile Bank", "tmb.webp" },
-            {"Union Bank of India", "union.webp" }
+            { "Bank of Baroda", "bank-of-baroda.png" },
+            { "Canara Bank", "canara.png" },
+            { "Citi Bank", "citi.jpeg" },
+            { "HDFC Bank", "hdfc.png" },
+            { "HSBC", "hsbc.png" },
+            { "ICICI Bank", "icici.png" },
+            { "Indian Bank", "indian.png" },
+            { "Indian Overseas Bank", "indian-overseas.png" },
+            { "Karur Vysya Bank", "karur-vysya.jpg" },
+            { "Kotak Mahendra Bank", "kotak-mahindra.jpg" },
+            { "State Bank of India", "sbi.png" },
+            { "Tamilnad Mercantile Bank", "tmb.webp" },
+            { "Union Bank of India", "union.webp" }
         };
 
         public static List<string> AccountTypes { get; set; } = new List<string>()

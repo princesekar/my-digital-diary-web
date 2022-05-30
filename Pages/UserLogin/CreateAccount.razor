@@ -53,7 +53,7 @@
             await SetLoader.InvokeAsync(true);
 
             HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/addNewUser", Model);
-            UserLoginResponse? loginResponse = await response.Content.ReadFromJsonAsync<UserLoginResponse>();
+            UserLoginResponse loginResponse = await response.Content.ReadFromJsonAsync<UserLoginResponse>();
             if (loginResponse != null)
             {
                 if (loginResponse.IsUserAdded)

@@ -27,16 +27,21 @@
 </AppLayout>
 
 <style>
+        .clock-wrapper {
+        width: 100%;
+        min-height: 21.875rem;
+    }
+
     .select-night,
     .select-night.mud-input-control {
         background: @MudBlazor.Colors.Shades.Black;
     }
 
-        .select-night .mud-input > input.mud-input-root,
-        .select-night.mud-input-control label.mud-input-label {
-            background: @MudBlazor.Colors.Shades.Black;
-            color: @MudBlazor.Colors.Shades.White;
-        }
+    .select-night .mud-input > input.mud-input-root,
+    .select-night.mud-input-control label.mud-input-label {
+        background: @MudBlazor.Colors.Shades.Black;
+        color: @MudBlazor.Colors.Shades.White;
+    }
 </style>
 
 @code {
@@ -95,7 +100,7 @@
     protected override void OnInitialized()
     {
         PrimaryId = "Asia/Kolkata";
-    SecondaryId = "America/New_York";
+        SecondaryId = "America/New_York";
         foreach (TimeZoneInfo timeZone in TimeZoneInfo.GetSystemTimeZones())
         {
             timeZones.Add(timeZone.Id);

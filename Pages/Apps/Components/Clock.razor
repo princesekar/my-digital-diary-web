@@ -42,8 +42,7 @@
 @code {
     private Timer timer;
     private bool isNight;
-    private TimeSpan TimeNow;
-    public SfCircularGauge? ClockRef;
+    public SfCircularGauge ClockRef;
     public double SecondsPointer = 0.2;
     public double MinutesPointer = 0.1;
     public double HoursPointer = 1;
@@ -141,7 +140,7 @@
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {

@@ -102,7 +102,8 @@
                             </BSCol>
                         </BSRow>
                         <BSRow MarginBottom="Margins.ExtraLarge">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="MudBlazor.Size.Large" ButtonType="ButtonType.Submit" FullWidth="true">@submitLabel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="MudBlazor.Size.Large" ButtonType="ButtonType.Submit"
+                                   FullWidth="true" Style="@($"background:{userState.Theme}")">@submitLabel</MudButton>
                         </BSRow>
                     </BSContainer>
                 </EditForm>
@@ -125,18 +126,26 @@
         width: 100%;
     }
 
-        .bank-card-popup .bank-logo {
-            background: transparent;
-            border: 1px solid #dadce0;
-        }
-
-        .bank-card-popup .mud-avatar-img {
-            height: auto;
-        }
+    .bank-card-popup .bank-logo {
+        background: transparent;
+        border: 1px solid #dadce0;
+    }
+    
+    .bank-card-popup .mud-avatar-img {
+        height: auto;
+    }
 
     .bank-card-form {
         max-height: calc(100vh - 4.875rem);
         overflow-y: scroll
+    }
+
+    .bank-card-popup .mud-input.mud-input-outlined:focus-within .mud-input-outlined-border {
+        border-color: @userState.Theme;
+    }
+
+    .bank-card-popup .mud-input:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
+        color: @userState.Theme;
     }
 </style>
 
@@ -155,7 +164,7 @@
     public MudDialogInstance MudDialog { get; set; }
 
     [CascadingParameter]
-    protected EventCallback<bool> SetLoader { get; set; }
+    public EventCallback<bool> SetLoader { get; set; }
 
     [Parameter]
     public bool IsAddCard { get; set; }
@@ -178,7 +187,7 @@
     [Parameter]
     public string ImagePath { get; set; }
 
-    public void OnCVVIconClick()
+    private void OnCVVIconClick()
     {
         @if (!cvvVisible)
         {
@@ -193,7 +202,7 @@
         cvvVisible = !cvvVisible;
     }
 
-    public void OnPinIconClick()
+    private void OnPinIconClick()
     {
         @if (!pinVisible)
         {
@@ -237,7 +246,7 @@
             isUpdating = true;
         }
         HttpResponseMessage response = await Http.PostAsJsonAsync("https://mydigitaldiaryservice.azurewebsites.net/" + apiPath, model);
-        CardApiResponse? cardResponse = await response.Content.ReadFromJsonAsync<CardApiResponse>();
+        CardApiResponse cardResponse = await response.Content.ReadFromJsonAsync<CardApiResponse>();
         if (cardResponse != null)
         {
             if (cardResponse.IsCardAdded)
